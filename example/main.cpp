@@ -28,7 +28,8 @@ void testSimpleFiber()
     fiber->wake();
     qDebug() << "Wake2";
     fiber->wake();
-    qDebug() << "Fiber is done";
+    //BUG: Never getting here in Windows
+    qDebug() << "testSimpleFiber Done";
 }
 
 //Fiber counts to five at the minimum tick interval
@@ -51,7 +52,7 @@ void testSleep()
 
        //Yield the fiber for 5 seconds
        CoQt::Fiber::yield(5000);
-       qDebug() << "Done";
+       qDebug() << "testSleep Done";
     });
 }
 
@@ -70,7 +71,7 @@ void testLambda()
            return (i == 5);
        }, 10);
 
-       qDebug() << "Done";
+       qDebug() << "testLambda Done";
     });
 }
 
@@ -152,7 +153,7 @@ void testQFuture()
                 QThread::msleep(25);
             }
 
-            qDebug() << "Returning";
+            qDebug() << "testQFuture Returning";
 
             return i; //Thread ends here
        }));
@@ -179,7 +180,7 @@ void testSignalWakeStyle1()
        //Wake the fiber when the specified signal is emitted
        CoQt::Fiber::yield(&t, SIGNAL(timeout()));
 
-       qDebug() << "Done";
+       qDebug() << "testSignalWakeStyle1 Done";
     });
 }
 
@@ -199,7 +200,7 @@ void testSignalWakeStyle2()
        //Will yield the fiber indefinately. However, the QTimer will wake it in about 3 seconds
        CoQt::Fiber::yieldForever();
 
-       qDebug() << "Done";
+       qDebug() << "testSignalWakeStyle2 Done";
     });
 }
 
@@ -209,9 +210,8 @@ int main(int argc, char * argv[])
 
     //Set the tick time to something super long so it's easy
     //to see what's happening
-    CoQt::context()->scheduler()->setMinimumTickTime(250);
+    CoQt::context()->scheduler()->setMinimumTickTime(2500);
 
-    /*
     qDebug();
     qDebug() << "Simple Fiber Test";
     qDebug() << "==========================";
@@ -231,7 +231,7 @@ int main(int argc, char * argv[])
     qDebug() << "Simple Lambda Test";
     qDebug() << "==========================";
     testLambda();
-*/
+
 
     testSignalWakeStyle2();
 
